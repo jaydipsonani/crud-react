@@ -2,6 +2,7 @@ import logo from './logo.svg';
 import './App.css';
 import { EmployeeData } from './EmployeeData.js';
 import { useEffect, useState } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 function App() {
 
@@ -11,6 +12,8 @@ function App() {
   const [Age, setAge] = useState(0)
   const [id, setId] = useState(0)
   const [isUpdated, setIsUpdated] = useState(false)
+  const [query, setQuery] = useState("")
+  console.log(EmployeeData.filter((employee) => employee.FirstName.includes("Joh")))
 
   useEffect(() => {
     setData(EmployeeData);
@@ -21,11 +24,11 @@ function App() {
     const dt = data.filter((item) => item.id === id)
     console.log(dt)
     // if (dt !== undefined) {
-      setIsUpdated(true)
-      setId(id);
-      setFirstName(dt[0].FirstName)
-      setLastName(dt[0].LastName)
-      setAge(dt[0].Age)
+    setIsUpdated(true)
+    setId(id);
+    setFirstName(dt[0].FirstName)
+    setLastName(dt[0].LastName)
+    setAge(dt[0].Age)
     // }
   }
 
@@ -44,31 +47,27 @@ function App() {
   const handleSave = () => {
     let error = ''
 
-    if(FirstName === "")
-      {
-        error += 'First Name is required, '
-      }
-    if(LastName === "")
-      {
-        error += "last Name is required, "
-      }
-    if(Age <=0)
-      {
-        error += "age is require"
-      }
-    if(error ===""){
-      const dt = [...data]
+    if (FirstName === "") {
+      error += 'First Name is required, '
+    }
+    if (LastName === "") {
+      error += "last Name is required, "
+    }
+    if (Age <= 0) {
+      error += "age is require"
+    }
+    if (error === "") {
       const newObject = {
         id: Math.floor((Math.random() * 100) + 1),
         FirstName: FirstName,
         LastName: LastName,
         Age: Age
       }
-      dt.push(newObject)
+      const dt = [...data, newObject]
+      // dt.push(newObject)
       setData(dt)
       handleClear()
-    }else
-    {
+    } else {
       alert(error)
     }
 
@@ -82,7 +81,7 @@ function App() {
     dt[index].FirstName = FirstName
     dt[index].LastName = LastName
     dt[index].Age = Age
-    handleClear();  
+    handleClear();
   }
 
   const handleClear = () => {
@@ -97,6 +96,10 @@ function App() {
     <div className="App">
       <div className='d-flex justify-content-center align-items-center mt-3'>
         <div>
+          <lable>search:- </lable>
+          <input type='text' placeholder='search...' className='search' onChange={(e) => setQuery(e.target.value)} />&nbsp;&nbsp;
+        </div>
+        <div>
           <lable>FirstName:- </lable>
           <input type='text' placeholder='enter First Name' onChange={(e) => setFirstName(e.target.value)} value={FirstName} />&nbsp;&nbsp;
         </div>
@@ -109,9 +112,9 @@ function App() {
           <input type='text' placeholder='enter Age' onChange={(e) => setAge(e.target.value)} value={Age} />&nbsp;&nbsp;
         </div>
         <div>
-        {
-          !isUpdated ? (<button className='btn btn-primary' onClick={() => handleSave()}>save</button>):( <button className='btn btn-primary' onClick={() => handleUpdate()} >Update</button>) 
-        }
+          {
+            !isUpdated ? (<button className='btn btn-primary' onClick={() => handleSave()}>save</button>) : (<button className='btn btn-primary' onClick={() => handleUpdate()} >Update</button>)
+          }
           <button className='btn btn-warning ms-3' onClick={() => handleClear()}>clear</button>
         </div>
       </div>
@@ -129,7 +132,7 @@ function App() {
         </thead>
         <tbody>
           {
-            data.map((employee, index) => {
+            data.filter((employee) => employee.FirstName.toLowerCase().includes(query) || employee.LastName.toLowerCase().includes(query)).map((employee, index) => {
               return (
                 <tr key={index}>
                   <td>{index + 1}</td>
@@ -138,9 +141,10 @@ function App() {
                   <td>{employee.LastName}</td>
                   <td>{employee.Age}</td>
                   <td>
-                    <button className='btn btn-primary' onClick={() => handleEdit(employee.id)} >Edit</button>&nbsp;&nbsp;
-                    
-                    <button className='btn btn-danger' onClick={() => handleDelete(employee.id)}>Delete</button>
+                    <span className='hello' onClick={() => handleEdit(employee.id)}><i class="fa-solid fa-pen-to-square"></i></span>
+                    {/* <button className='btn btn-primary' onClick={() => handleEdit(employee.id)} >Edit</button>&nbsp;&nbsp; */}
+                    <span className='ms-4 hello' onClick={() => handleDelete(employee.id)} ><i class="fa-solid fa-trash"></i></span>
+                    {/* <button className='btn btn-danger' onClick={() => handleDelete(employee.id)}>Delete</button> */}
                   </td>
                 </tr>
               )
