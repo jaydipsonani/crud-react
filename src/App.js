@@ -1,8 +1,8 @@
-import logo from './logo.svg';
 import './App.css';
 import { EmployeeData } from './EmployeeData.js';
 import { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import jsPDF from 'jspdf'
+import autoTable from 'jspdf-autotable'
 
 function App() {
 
@@ -13,23 +13,21 @@ function App() {
   const [id, setId] = useState(0)
   const [isUpdated, setIsUpdated] = useState(false)
   const [query, setQuery] = useState("")
-  console.log(EmployeeData.filter((employee) => employee.FirstName.includes("Joh")))
 
   useEffect(() => {
     setData(EmployeeData);
   }, []);
 
   const handleEdit = (id) => {
-    // alert(id)
+
     const dt = data.filter((item) => item.id === id)
     console.log(dt)
-    // if (dt !== undefined) {
+    console.log("good morning")
     setIsUpdated(true)
-    setId(id);
+    setId(id)
     setFirstName(dt[0].FirstName)
     setLastName(dt[0].LastName)
     setAge(dt[0].Age)
-    // }
   }
 
   const handleDelete = (id) => {
@@ -40,8 +38,6 @@ function App() {
         setData(dt)
       }
     }
-
-    // alert(id)
   }
 
   const handleSave = () => {
@@ -58,10 +54,10 @@ function App() {
     }
     if (error === "") {
       const newObject = {
-        id: Math.floor((Math.random() * 100) + 1),
-        FirstName: FirstName,
-        LastName: LastName,
-        Age: Age
+        id: Math.floor((Math.random() * 100) + 2),
+        FirstName,
+        LastName,
+        Age
       }
       const dt = [...data, newObject]
       // dt.push(newObject)
@@ -70,8 +66,8 @@ function App() {
     } else {
       alert(error)
     }
-
   }
+
   const handleUpdate = () => {
     const index = data.map((item) => {
       return item.id
@@ -91,10 +87,15 @@ function App() {
     setIsUpdated(false)
   }
 
+  const handleDownload = () => {
+    const doc = new jsPDF()
+    autoTable(doc,{ html: '#table' })
+    doc.save('data.pdf')
+  }
 
   return (
     <div className="App">
-      <div className='d-flex justify-content-center align-items-center mt-3'>
+      <div className='d-flex justify-content-center align-items-center mt-3 main'>
         <div>
           <lable>search:- </lable>
           <input type='text' placeholder='search...' className='search' onChange={(e) => setQuery(e.target.value)} />&nbsp;&nbsp;
@@ -116,10 +117,11 @@ function App() {
             !isUpdated ? (<button className='btn btn-primary' onClick={() => handleSave()}>save</button>) : (<button className='btn btn-primary' onClick={() => handleUpdate()} >Update</button>)
           }
           <button className='btn btn-warning ms-3' onClick={() => handleClear()}>clear</button>
+          <button className='btn btn-primary ms-3' onClick={() => handleDownload()}>download</button>
         </div>
       </div>
 
-      <table className='table table-hover mt-3' border="1px solid black" width="100%">
+      <table className='table table-hover mt-3' id='table' border="1px solid black" width="100%">
         <thead>
           <tr>
             <th>Sr. No</th>
@@ -152,7 +154,6 @@ function App() {
           }
         </tbody>
       </table>
-
     </div>
   );
 }
