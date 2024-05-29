@@ -22,7 +22,8 @@ function App() {
 
     const dt = data.filter((item) => item.id === id)
     console.log(dt)
-    console.log("good morning")
+    // console.log("good morning")
+    // console.log("radhe radhe")
     setIsUpdated(true)
     setId(id)
     setFirstName(dt[0].FirstName)
